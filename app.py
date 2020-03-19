@@ -29,7 +29,8 @@ class NewPokemonForm(FlaskForm):
 def index(form=None):
     if form is None:
         form = NewPokemonForm()
-    return render_template("index.html", form=form)
+    pokemons = list(Pokemon.query.order_by(Pokemon.id))
+    return render_template("index.html", pokemons=pokemons, form=form)
 
 
 @app.route("/add/", methods=("POST",))

@@ -1,5 +1,13 @@
 <html>
 <body>
+{% for pokemon in pokemons %}
+    <p>
+    <div>
+        <span>{{ pokemon.name }}  </span><span>{{ pokemon.type }}  </span><span>{{ pokemon.attack }}</span>
+    </div>
+    </p>
+{% endfor %}
+<hr>
 <form method="POST" action="{{ url_for('add_comment') }}">
     {{ form.csrf_token }}
     <p>
