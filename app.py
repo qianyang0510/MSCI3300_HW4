@@ -1,8 +1,46 @@
-from flask import Flask, escape, request
+from flask import Flask, render_template, redirect, url_for
+from flask_sqlalchemy import SQLAlchemy
+from wtforms import StringField, IntegerField
+from wtforms.validators import DataRequired
+from flask_wtf import FlaskForm
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://qianyang:@localhost/pokemon'
+app.config['SECRET_KEY'] = 'secret'
+app.config['DEBUG'] = True
+db = SQLAlchemy(app)
 
-@app.route('/')
-def hello():
-    name = request.args.get("name", "World")
-    return f'Hello, {escape(name)}!'
+
+class Pokemon(db.Model):
+    __tablename__ = 'pokemon'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), unique=True)
+    type = db.Column(db.String(100))
+    attack = db.Column(db.Integer)
+
+
+class NewPokemonForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()])
+    type = StringField("Type", validators=[DataRequired()])
+    attack = IntegerField("Attack", validators=[DataRequired()])
+
+
+@app.route("/")
+def index(form=None):
+    if form is None:
+        form = NewPokemonForm()
+    return render_template("index.html", form=form)
+
+
+@app.route("/add/", methods=("POST",))
+def add_comment():
+    form = NewPokemonForm()
+    if form.validate_on_submit():
+        db.session.add(Pokemon(name=form.name.data, type=form.type.data, attack=form.attack.data))
+        db.session.commit()
+        return redirect(url_for("index"))
+    return index(form)
+
+
+if __name__ == "__main__":
+    app.run()

@@ -1,0 +1,18 @@
+<html>
+<body>
+<form method="POST" action="{{ url_for('add_comment') }}">
+    {{ form.csrf_token }}
+    <p>
+        {{ form.name.label }}
+        {{ form.name() }}<br>
+        {{ form.type.label }}
+        {{ form.type() }}<br>
+        {{ form.attack.label }}
+        {{ form.attack() }}<br>
+    </p>
+    <p>
+        <input type="submit" value="Add Pokemon">
+    </p>
+</form>
+</body>
+</html>
