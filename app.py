@@ -25,6 +25,10 @@ class NewPokemonForm(FlaskForm):
     attack = IntegerField("Attack", validators=[DataRequired()])
 
 
+class DeletePokemonForm(FlaskForm):
+    id = IntegerField()
+
+
 @app.route("/")
 def index(form=None):
     if form is None:
@@ -41,6 +45,16 @@ def add_comment():
         db.session.commit()
         return redirect(url_for("index"))
     return index(form)
+
+
+@app.route("/delete", methods=("POST",))
+def delete_pokemon():
+    form = DeletePokemonForm()
+    if form.validate_on_submit():
+        pokemon = db.session.query(Pokemon).filter_by(id=form.id.data).one()
+        db.session.delete(pokemon)
+        db.session.commit()
+    return redirect(url_for("index"))
 
 
 if __name__ == "__main__":

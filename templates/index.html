@@ -5,6 +5,11 @@
     <div>
         <span>{{ pokemon.name }}  </span><span>{{ pokemon.type }}  </span><span>{{ pokemon.attack }}</span>
     </div>
+    <form method="POST" action="{{ url_for('delete_pokemon') }}">
+        {{ form.csrf_token }}
+        <input id="id" name="id" type="hidden" value="{{ pokemon.id }}">
+        <input type="submit" value="delete"/>
+    </form>
     </p>
 {% endfor %}
 <hr>
