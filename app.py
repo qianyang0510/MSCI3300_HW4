@@ -3,15 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, IntegerField
 from wtforms.validators import DataRequired
 from flask_wtf import FlaskForm
-#import secrets
-import os
 
-dbuser = os.environ.get('DBUSER')
-dbpass = os.environ.get('DBPASS')
-dbhost = os.environ.get('DBHOST')
-dbname = os.environ.get('DBNAME')
 
-conn = "mysql+pymysql://{0}:{1}@{2}/{3}".format(dbuser, dbpass, dbhost, dbname)
 
 
 app = Flask(__name__)
