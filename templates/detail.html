@@ -1,21 +1,20 @@
 <html>
 <body>
-{% for pokemon in pokemons %}
     <p>
     <div>
+        <span>{{ pokemon.id }}</span>
         <span>{{ pokemon.name }}  </span>
         <span>{{ pokemon.type }}  </span>
         <span>{{ pokemon.attack }}</span>
     </div>
-    <form method="POST" action="{{ url_for('delete_pokemon') }}">
+    <form method="POST" action="/delete">
         {{ form.csrf_token }}
         <input id="id" name="id" type="hidden" value="{{ pokemon.id }}">
         <input type="submit" value="delete"/>
     </form>
     </p>
-{% endfor %}
 <hr>
-<form method="POST" action="{{ url_for('update_pokemon') }}">
+<form method="POST" action="/update/{{ pokemon.id }}">
     {{ form.csrf_token }}
     <p>
         {{ form.name.label }}
@@ -26,7 +25,7 @@
         {{ form.attack() }}<br>
     </p>
     <p>
-        <input type="submit" value="Add Pokemon">
+        <input type="submit" value="Update Pokemon">
     </p>
 </form>
 </body>

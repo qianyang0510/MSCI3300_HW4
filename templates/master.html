@@ -1,33 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Master</title>
-</head>
+<html>
 <body>
-    <form method="POST" action="/search">
-        <p>Pokemon Name: <input type="text" name="name" /></p>
-        <input type="submit" value="Search" />
-    </form>
-
-    <hr/>  
-    <table>
-        <thead>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Attack</th>
-        </thead>
-        <tbody>
-            {% for res in results %}
-            <tr>
-                <td>{{ res.id }}  </td>
-                <td>{{ res.name }}  </td>
-                <td>{{ res.type }}  </td>
-                <td>{{ res.attack }}</td>
-            </tr>
-            {% endfor %}           
-        </tbody>
-    </table>
+{% for pokemon in pokemons %}
+    <p>
+    <div>
+        <span>{{ pokemon.id }}</span>
+        <span>{{ pokemon.name }}  </span>
+        <span><a href="/detail/{{ pokemon.id }}">detail</a></span>
+    </div>
+    </p>
+{% endfor %}
+<hr/>
+<form method="POST" action="{{ url_for('add_pokemon') }}">
+    {{ form.csrf_token }}
+    <p>
+        {{ form.name.label }}
+        {{ form.name() }}<br>
+        {{ form.type.label }}
+        {{ form.type() }}<br>
+        {{ form.attack.label }}
+        {{ form.attack() }}<br>
+    </p>
+    <p>
+        <input type="submit" value="Add Pokemon">
+    </p>
+</form>
+<hr/>
+<div>
+    <a href="/search">Search Pokemon</a>
+</div>
 </body>
 </html>

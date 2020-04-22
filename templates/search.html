@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search</title>
+</head>
+<body>
+    <form method="POST" action="{{ url_for('search') }">
+        <p>{{ search_form.name.label }} {{ search_form.name }}</p>
+        <input type="submit" value="Search" />
+    </form>
+
+    <hr/>  
+    <table>
+        <thead>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Attack</th>
+        </thead>
+        <tbody>
+            {% for res in results %}
+            <tr>
+                <td>{{ res.id }}  </td>
+                <td>{{ res.name }}  </td>
+                <td>{{ res.type }}  </td>
+                <td>{{ res.attack }}</td>
+            </tr>
+            {% endfor %}           
+        </tbody>
+    </table>
+</body>
+</html>

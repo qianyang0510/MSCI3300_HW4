@@ -5,8 +5,8 @@ from wtforms.validators import DataRequired
 from flask_wtf import FlaskForm
 
 app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://qianyang:@localhost/pokemon'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:tap4fun@172.20.90.11/test'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://qianyang:@localhost/pokemon'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'secret'
 app.config['DEBUG'] = True
 db = SQLAlchemy(app)
@@ -21,6 +21,7 @@ def serialize_list(model_list):
 
 class Pokemon(db.Model):
     __tablename__ = 'pokemon'
+
     id = db.Column(db.Integer, primary_key=True,autoincrement=True)
     name = db.Column(db.String(100), unique=True)
     type = db.Column(db.String(100))
@@ -34,36 +35,62 @@ class NewPokemonForm(FlaskForm):
     type = StringField("Type", validators=[DataRequired()])
     attack = IntegerField("Attack", validators=[DataRequired()])
 
+class UpdatePokemonForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()])
+    type = StringField("Type", validators=[DataRequired()])
+    attack = IntegerField("Attack", validators=[DataRequired()])
+
+class SearchPokemonForm(FlaskForm):
+    name = StringField("Pokemon Name:")
 
 class DeletePokemonForm(FlaskForm):
     id = IntegerField()
 
 @app.route("/search", methods=['GET', 'POST'])
-def master():
-    if request.method == 'GET':
-        return render_template('master.html')
+def search():
     if request.method == 'POST':
-        name = request.form.get('name')
-        results = Pokemon.query.filter(Pokemon.name.like('%{}%'.format(name))).all()
-        return render_template('master.html',results=results)
-        
+        search_form = SearchPokemonForm()
+        if search_form.validate_on_submit():
+            results = Pokemon.query.filter(Pokemon.name.like('%{}%'.format(search_form.name.data))).all()
+            return render_template('search.html',results=results)
+    return render_template('search.html')   
 
 @app.route("/")
 def index(form=None):
     if form is None:
         form = NewPokemonForm()
     pokemons = list(Pokemon.query.order_by(Pokemon.id))
-    return render_template("index.html", pokemons=pokemons, form=form)
+    return render_template("master.html", pokemons=pokemons, form=form)
 
 
-@app.route("/add/", methods=("POST",))
-def add_comment():
+@app.route("/detail/<int:id>", methods=['GET','POST'])
+def detail(id,form=None):
+    pokemon = Pokemon.query.filter_by(id=id).one()
+    if form is None:
+        form = UpdatePokemonForm()
+    return render_template('detail.html',pokemon=pokemon,form=form)
+
+
+@app.route("/add/", methods=["POST"])
+def add_pokemon():
     form = NewPokemonForm()
     if form.validate_on_submit():
         db.session.add(Pokemon(name=form.name.data, type=form.type.data, attack=form.attack.data))
         db.session.commit()
         return redirect(url_for("index"))
     return index(form)
+
+
+@app.route("/update/<int:id>", methods=["POST"])
+def update_pokemon(id):
+    pokemon = Pokemon.query.filter_by(id=id).one()
+    form = UpdatePokemonForm()
+    if form.validate_on_submit():
+        pokemon.name = form.name.data
+        pokemon.type = form.type.data
+        pokemon.attack = form.attack.data
+        db.session.commit()
+    return detail(id)
 
 
 @app.route("/delete", methods=("POST",))
