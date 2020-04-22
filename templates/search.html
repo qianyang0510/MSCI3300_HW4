@@ -5,8 +5,8 @@
     <title>Search</title>
 </head>
 <body>
-    <form method="POST" action="{{ url_for('search') }">
-        <p>{{ search_form.name.label }} {{ search_form.name }}</p>
+    <form method="POST" action="/search">
+        <p>Pokemon Name: <input type="text" name="name" /></p>
         <input type="submit" value="Search" />
     </form>
 

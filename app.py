@@ -49,10 +49,9 @@ class DeletePokemonForm(FlaskForm):
 @app.route("/search", methods=['GET', 'POST'])
 def search():
     if request.method == 'POST':
-        search_form = SearchPokemonForm()
-        if search_form.validate_on_submit():
-            results = Pokemon.query.filter(Pokemon.name.like('%{}%'.format(search_form.name.data))).all()
-            return render_template('search.html',results=results)
+        name = request.form.get('name')
+        results = Pokemon.query.filter(Pokemon.name.like('%{}%'.format(name))).all()
+        return render_template('search.html',results=results)
     return render_template('search.html')   
 
 @app.route("/")
